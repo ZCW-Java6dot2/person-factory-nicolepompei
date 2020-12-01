@@ -36,22 +36,45 @@ public final class PersonWarehouse implements Iterable<Person> {
      * @return list of names of Person objects
      */ // TODO
     public List<String> getNames() {
-        return null;
+
+      List<String> names =  people.stream()
+                .map(Person::getName)
+                .collect(Collectors.toList());
+
+        return names;
     }
 
 
     /**
      * @return list of uniquely named Person objects
      */ //TODO
+    //to get unique names create a new list to compare to, if new list contains the name return false
+    //else return add to new list from person list and return true and return the stream
     public Stream<Person> getUniquelyNamedPeople() {
-        return null;
+
+//      return (Stream<Person>) people.stream()
+//                .distinct()
+//                .forEach(name::person.getName());
+
+        List<String> uniqueNames = new ArrayList<>();
+        return people.stream()
+                .filter(person -> {
+                            if(uniqueNames.contains(person.getName())){
+                            return false;
+                            }
+                            else
+                                uniqueNames.add(person.getName());
+                                return true;
+    });
     }
+
 
 
     /**
      * @param character starting character of Person objects' name
      * @return a Stream of respective
      */ //TODO
+    //
     public Stream<Person> getUniquelyNamedPeopleStartingWith(Character character) {
         return null;
     }
