@@ -52,32 +52,40 @@ public final class PersonWarehouse implements Iterable<Person> {
      * @return list of uniquely named Person objects
      */ //TODO
 
-
-    public static <T> Predicate<T> distinctByKey(
-            Function<? super T, ?> keyExtractor) {
-
-        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
-        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
-    }
+//
+//    public static <T> Predicate<T> distinctByKey(
+//            Function<? super T, ?> keyExtractor) {
+//
+//        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+//        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+//    }
 
 
     public Stream<Person> getUniquelyNamedPeople() {
-//implemented a predicate to use distinct by key
-      return  people.stream()
-                .filter(distinctByKey(person -> person.getName()));
+//implemented a predicate to use distinct by key (static method above)
+//      return  people.stream()
+//                .filter(distinctByKey(person -> person.getName()));
+
+        //if we could modify person class, this method would work with an overriden equals method set up to compare custom objects
+//      List<Person> distinctpeople = people.stream()
+//              .distinct().collect(Collectors.toList());
+//
+//      return distinctpeople.stream();
+
+
 
 //Alternate solution to get unique names create a new list to compare to, if new list contains the name return false
         //else return add to new list from person list and return true and return the stream
-//        List<String> uniqueNames = new ArrayList<>();
-//        return people.stream()
-//                .filter(person -> {
-//                            if(uniqueNames.contains(person.getName())){
-//                            return false;
-//                            }
-//                            else
-//                                uniqueNames.add(person.getName());
-//                                return true;
-//                });
+        List<String> uniqueNames = new ArrayList<>();
+        return people.stream()
+                .filter(person -> {
+                            if(uniqueNames.contains(person.getName())){
+                            return false;
+                            }
+                            else
+                                uniqueNames.add(person.getName());
+                                return true;
+                });
     }
 
 
