@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,15 +39,34 @@ public final class PersonWarehouse implements Iterable<Person> {
      * @return list of names of Person objects
      */ // TODO
     public List<String> getNames() {
-        return null;
+
+      List<String> names =  people.stream()
+                .map(Person::getName)
+                .collect(Collectors.toList());
+
+        return names;
     }
 
 
     /**
      * @return list of uniquely named Person objects
      */ //TODO
+
+
     public Stream<Person> getUniquelyNamedPeople() {
-        return null;
+//Alternate solution to get unique names create a new list to compare to, if new list contains the name return false
+        //else return add to new list from person list and return true and return the stream
+        List<String> uniqueNames = new ArrayList<>();
+        return people.stream()
+                .filter(person -> {
+                            if(uniqueNames.contains(person.getName())){
+                            return false;
+                            }
+                            else
+                                uniqueNames.add(person.getName());
+                                return true;
+                });
+
     }
 
 
@@ -52,8 +74,11 @@ public final class PersonWarehouse implements Iterable<Person> {
      * @param character starting character of Person objects' name
      * @return a Stream of respective
      */ //TODO
+    //
     public Stream<Person> getUniquelyNamedPeopleStartingWith(Character character) {
-        return null;
+        return people.stream()
+                    .filter(person -> person.getName().charAt(0) == character);
+
     }
 
     /**
@@ -61,14 +86,26 @@ public final class PersonWarehouse implements Iterable<Person> {
      * @return a Stream of respective
      */ //TODO
     public Stream<Person> getFirstNUniquelyNamedPeople(int n) {
-        return null;
+        return getUniquelyNamedPeople().limit(n);
+//        List<String> uniqueNames = new ArrayList<>();
+//
+//        return people.stream()
+//                .filter(person -> {
+//                        if(uniqueNames.contains(person.getName()) || uniqueNames.size() >= n){
+//                            return false;
+//                        } else
+//                            uniqueNames.add(person.getName());
+//                        return true;
+//                });
     }
 
     /**
      * @return a mapping of Person Id to the respective Person name
      */ // TODO
     public Map<Long, String> getIdToNameMap() {
-        return null;
+
+        return people.stream()
+                .collect(Collectors.toMap(Person::getPersonalId, Person::getName));
     }
 
 
@@ -76,7 +113,8 @@ public final class PersonWarehouse implements Iterable<Person> {
      * @return Stream of Stream of Aliases
      */ // TODO
     public Stream<Stream<String>> getNestedAliases() {
-        return null;
+        return people.stream()
+                .map(person -> Stream.of(person.getAliases()));
     }
 
 
@@ -84,7 +122,9 @@ public final class PersonWarehouse implements Iterable<Person> {
      * @return Stream of all Aliases
      */ // TODO
     public Stream<String> getAllAliases() {
-        return null;
+        return getNestedAliases().
+                flatMap(Function.identity());
+
     }
 
     // DO NOT MODIFY
